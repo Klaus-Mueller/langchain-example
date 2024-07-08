@@ -2,7 +2,7 @@ import os
 from langchain_openai import OpenAI
 from langchain.prompts import PromptTemplate
 
-def call_openai_api() -> str:
+def call_openai_api():
     """
     Calls the OpenAI API with the given prompt and returns the response.
 
