@@ -2,7 +2,13 @@ import os
 from langchain_openai import ChatOpenAI
 from langchain_core.messages import HumanMessage, SystemMessage  
 from langchain.schema import StrOutputParser
-from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder 
+from langchain_community.chat_message_histories import Neo4jChatMessageHistory
+from langchain_community.chat_message_histories import ChatMessageHistory
+from langchain_core.runnables.history import RunnableWithMessageHistory
+
+
+memory = ChatMessageHistory()
 
 def get_openAPI_llm():
     # Retrieve the API key from the environment variable
@@ -18,7 +24,20 @@ def get_openAPI_llm():
 
     return chat_llm
 
-# Example usage
+def get_chat_history():
+    history = Neo4jChatMessageHistory(
+        url="bolt://localhost:7687",
+        username="neo4j",
+        password="ds123123",
+        session_id="session_id_1",
+    )
+    return history
+
+
+def get_memory(session_id):
+    return memory
+
+
 if __name__ == "__main__":
     prompt = ChatPromptTemplate.from_messages([
         (
@@ -30,12 +49,22 @@ if __name__ == "__main__":
             "{question}"
         ),
         (
-         "system",
-         "{context}"
+            "system",
+            "{context}"
         ),
+        MessagesPlaceholder(variable_name="chat_history"),
     ])
     chat_llm = get_openAPI_llm()
+    
     chat_chain = prompt | chat_llm | StrOutputParser()
+    
+    chat_with_message_history = RunnableWithMessageHistory(
+        chat_chain,
+        get_memory,
+        input_messages_key="question",
+        history_messages_key="chat_history",
+    )
+    
     defeated_bosses = """
     {
         "defeated_bosses": [
@@ -44,8 +73,16 @@ if __name__ == "__main__":
         ]
     }
     """
-    response = chat_chain.invoke({
-        "context" : defeated_bosses,
-        "question": "What is the next easier boss for me to fight? Take in consideration the list of defeated bosses I already killed"
-        })
-    print(response)
+    session_id = "unique_session_id_1"
+
+    while True:
+        question = input("> ")
+        response = chat_with_message_history.invoke(
+            {
+                "context" : defeated_bosses,
+                "question": question
+            },
+            config={"configurable": {"session_id": session_id}}
+        )
+        
+        print(response)
