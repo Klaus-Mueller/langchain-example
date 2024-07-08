@@ -1,4 +1,5 @@
 import os
+from colorama import Fore, Style, init
 from langchain_openai import ChatOpenAI
 from langchain_core.messages import HumanMessage, SystemMessage  
 from langchain.schema import StrOutputParser
@@ -34,7 +35,6 @@ def getNeo4jConnection():
 
 def get_memory(session_id):
     return Neo4jChatMessageHistory(session_id=session_id, graph=getNeo4jConnection())
-
 
 
 if __name__ == "__main__":
@@ -82,4 +82,4 @@ if __name__ == "__main__":
             config={"configurable": {"session_id": SESSION_ID}}
         )
         
-        print(response)
+        print(Fore.GREEN + response)
