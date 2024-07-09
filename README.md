@@ -8,3 +8,5 @@ This project is a chatbot designed to engage in conversations about the game Dar
 - **Neo4j Integration**: Utilizes Neo4j for managing chat message history.
 - **Prompt Templates**: Uses `ChatPromptTemplate` for structured conversation prompts.
 - **Message History**: Maintains chat history to provide contextually relevant responses.
+
+![Chatbot in Action](chat-example.png.png)
