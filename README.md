@@ -9,4 +9,4 @@ This project is a chatbot designed to engage in conversations about the game Dar
 - **Prompt Templates**: Uses `ChatPromptTemplate` for structured conversation prompts.
 - **Message History**: Maintains chat history to provide contextually relevant responses.
 
-![Chatbot in Action](chat-example.png.png)
+![Chatbot in Action](chat-example.png)
